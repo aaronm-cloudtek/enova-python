@@ -57,10 +57,23 @@ module PoisePython
 
       def install_python
         install_system_packages
+        if node.platform_family?('debian') && node['lsb']['codename'] == 'buster' && system_package_name.starts_with?('python3')
+          # Debian 10 dependency nonsense
+          _options = options
+          package %W{#{system_package_name}-venv #{system_package_name}-distutils} do
+            action(:upgrade) if _options['package_upgrade']
+          end
+        end
       end
 
       def uninstall_python
         uninstall_system_packages
+        if node.platform_family?('debian') && node['lsb']['codename'] == 'buster' && system_package_name.starts_with?('python3')
+          # Other side of the depdency nonsense
+          package %W{#{system_package_name}-venv #{system_package_name}-distutils} do
+            action(:purge)
+          end
+        end
       end
 
       def system_package_candidates(version)
@@ -74,7 +87,7 @@ module PoisePython
           end
           # Aliases for 2 and 3.
           if version == '3' || version == ''
-            names.concat(%w{python3.7 python3.6 python3.5 python35 python3.4 python34 python3.3 python33 python3.2 python32 python3.1 python31 python3.0 python30 python3})
+            names.concat(%w{python3.7 python37 python3.6 python36 python3.5 python35 python3.4 python34 python3.3 python33 python3.2 python32 python3.1 python31 python3.0 python30 python3})
           end
           if version == '2' || version == ''
             names.concat(%w{python2.7 python27 python2.6 python26 python2.5 python25})
