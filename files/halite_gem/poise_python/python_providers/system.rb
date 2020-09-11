@@ -57,7 +57,7 @@ module PoisePython
 
       def install_python
         install_system_packages
-        if node.platform_family?('debian') && node['lsb']['codename'] == 'buster' && system_package_name.starts_with?('python3')
+        if node.platform_family?('debian') && node['lsb']['codename'] == 'buster' && system_package_name.start_with?('python3')
           # Debian 10 dependency nonsense
           _options = options
           package %W{#{system_package_name}-venv #{system_package_name}-distutils} do
@@ -68,8 +68,8 @@ module PoisePython
 
       def uninstall_python
         uninstall_system_packages
-        if node.platform_family?('debian') && node['lsb']['codename'] == 'buster' && system_package_name.starts_with?('python3')
-          # Other side of the depdency nonsense
+        if node.platform_family?('debian') && node['lsb']['codename'] == 'buster' && system_package_name.start_with?('python3')
+          # Other side of the dependency nonsense
           package %W{#{system_package_name}-venv #{system_package_name}-distutils} do
             action(:purge)
           end
